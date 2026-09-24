@@ -68,6 +68,13 @@ class ResumenSuministrosDashboard(BaseModel):
     extintores_reserva: int
 
 
+class AdministradorACargo(BaseModel):
+    id: uuid.UUID
+    nombre: str
+    email: str
+    rol: str
+
+
 class DashboardAlbergueRespuesta(BaseModel):
     albergue_id: uuid.UUID
     folio_identificador: str
@@ -78,6 +85,7 @@ class DashboardAlbergueRespuesta(BaseModel):
     estado_operativo: str
     semaforo: str
     fecha_ultimo_corte: datetime | None = None
+    administrador_a_cargo: AdministradorACargo | None = None
     infraestructura: ResumenInfraestructuraDashboard
     recurso_humano: ResumenRecursoHumanoDashboard
     suministros: ResumenSuministrosDashboard

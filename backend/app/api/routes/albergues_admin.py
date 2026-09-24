@@ -20,6 +20,7 @@ from app.models.albergue_usuario import (
     PersonalAsignadoDetalle,
 )
 from app.models.dashboard_albergue import (
+    AdministradorACargo,
     DashboardAlbergueRespuesta,
     PersonaAlbergadaItemDashboard,
     ResumenInfraestructuraDashboard,
@@ -482,6 +483,46 @@ def carga_masiva_albergues(
 
 
 @router.get(
+    "/mi-albergue",
+    response_model=DashboardAlbergueRespuesta,
+    summary="Dashboard directo del albergue a cargo del Administrador autenticado",
+)
+def obtener_mi_albergue(
+    session: SessionDep,
+    usuario_actual: CurrentUser,
+) -> Any:
+    """Permite al Administrador de Albergue autenticado consultar directamente el albergue bajo su responsabilidad."""
+    # 1. Buscar en albergue_usuario si tiene una asignacion activa
+    consulta_asignacion = text("""
+        SELECT albergue_id
+        FROM albergue_usuario
+        WHERE usuario_id = :usuario_id
+          AND activo = true
+        ORDER BY fecha_asignacion DESC
+        LIMIT 1
+    """)
+    albergue_id = session.execute(
+        consulta_asignacion, {"usuario_id": usuario_actual.id}
+    ).scalar()
+
+    # 2. Si no tiene asignacion fija (ej. superusuario), tomar el primer albergue activo
+    if not albergue_id:
+        albergue_id = session.execute(
+            text("SELECT id FROM albergue ORDER BY nombre ASC LIMIT 1")
+        ).scalar()
+
+    if not albergue_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No se encontro ningun albergue activo a cargo del usuario.",
+        )
+
+    return obtener_dashboard_albergue(
+        id=albergue_id, session=session, usuario_actual=usuario_actual
+    )
+
+
+@router.get(
     "/{id}/dashboard",
     response_model=DashboardAlbergueRespuesta,
     summary="Dashboard consolidado de control para Administrador de Albergue",
@@ -509,6 +550,34 @@ def obtener_dashboard_albergue(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Albergue con identificador {id} no encontrado en el sistema.",
+        )
+
+    # 2. Consultar el Administrador a cargo del albergue
+    consulta_admin = text("""
+        SELECT u.id, u.full_name, u.email, u.rol
+        FROM albergue_usuario au
+        JOIN "user" u ON u.id = au.usuario_id
+        WHERE au.albergue_id = :albergue_id
+          AND (au.rol IN ('administrador', 'administrador_albergue') OR u.rol IN ('administrador_albergue', 'coordinador_emergencias'))
+          AND au.activo = true
+        LIMIT 1
+    """)
+    fila_admin = session.execute(consulta_admin, {"albergue_id": id}).mappings().first()
+
+    admin_a_cargo = None
+    if fila_admin:
+        admin_a_cargo = AdministradorACargo(
+            id=fila_admin["id"],
+            nombre=fila_admin["full_name"] or "Administrador Responsable",
+            email=fila_admin["email"],
+            rol=str(fila_admin["rol"] or "administrador_albergue"),
+        )
+    elif usuario_actual.is_superuser or str(usuario_actual.rol or "") in ("administrador_albergue", "coordinador_emergencias"):
+        admin_a_cargo = AdministradorACargo(
+            id=usuario_actual.id,
+            nombre=usuario_actual.full_name or "Administrador Responsable",
+            email=usuario_actual.email,
+            rol=str(usuario_actual.rol or "administrador_albergue"),
         )
 
     # 2. Consultar lista nominal de personas albergadas activas
@@ -573,6 +642,7 @@ def obtener_dashboard_albergue(
         estado_operativo=fila_vista["estado_operativo"],
         semaforo=fila_vista["semaforo"],
         fecha_ultimo_corte=fila_vista.get("fecha_ultimo_corte"),
+        administrador_a_cargo=admin_a_cargo,
         infraestructura=ResumenInfraestructuraDashboard(
             capacidad_maxima=fila_vista["capacidad_maxima"],
             ocupacion_actual=fila_vista["ocupacion_actual"],
