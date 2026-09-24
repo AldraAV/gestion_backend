@@ -3,7 +3,8 @@ from typing import Any
 
 import httpx
 
-MAPBOX_ACCESS_TOKEN = os.getenv("MAPBOX_ACCESS_TOKEN", "")
+from app.core.config import settings
+
 MAPBOX_DIRECTIONS_API = "https://api.mapbox.com/directions/v5/mapbox/driving"
 
 
@@ -13,25 +14,51 @@ class ErrorCalculoRuta(Exception):
     pass
 
 
+def obtener_token_mapbox() -> str:
+    return settings.MAPBOX_ACCESS_TOKEN or os.getenv("MAPBOX_ACCESS_TOKEN", "")
+
+
 async def obtener_ruta_mapbox(
-    origen_lon: float, origen_lat: float, destino_lon: float, destino_lat: float
+    origen_lon: float,
+    origen_lat: float,
+    destino_lon: float,
+    destino_lat: float,
+    puntos_exclusion: list[tuple[float, float]] | None = None,
 ) -> dict[str, Any]:
     """
     Consulta la API oficial de Mapbox Directions y extrae la geometria y segmentos detallados.
+    Soporta la evasion activa de incidencias mediante el parametro exclude de Mapbox.
     """
+    token = obtener_token_mapbox()
     coordenadas = f"{origen_lon},{origen_lat};{destino_lon},{destino_lat}"
-    parametros = {
+    parametros: dict[str, Any] = {
         "geometries": "geojson",
         "steps": "true",
         "overview": "full",
         "language": "es",
-        "access_token": MAPBOX_ACCESS_TOKEN,
+        "access_token": token,
     }
+
+    if puntos_exclusion:
+        # Formato Mapbox v5: point(lon lat),point(lon lat)
+        puntos_validos = [
+            f"point({lon:.5f} {lat:.5f})"
+            for lon, lat in puntos_exclusion[:10]
+            if abs(lon) <= 180 and abs(lat) <= 90
+        ]
+        if puntos_validos:
+            parametros["exclude"] = ",".join(puntos_validos)
+
     url = f"{MAPBOX_DIRECTIONS_API}/{coordenadas}"
 
     async with httpx.AsyncClient(timeout=15.0) as cliente:
         try:
             respuesta = await cliente.get(url, params=parametros)
+            # Salvaguarda: Si con exclusion estricta Mapbox no halla paso, reintentar sin exclusion
+            if respuesta.status_code != 200 and "exclude" in parametros:
+                parametros_rescate = dict(parametros)
+                del parametros_rescate["exclude"]
+                respuesta = await cliente.get(url, params=parametros_rescate)
         except Exception as error_red:
             raise ErrorCalculoRuta(f"Error de conexion con Mapbox: {str(error_red)}")
 

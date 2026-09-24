@@ -66,11 +66,57 @@ class RespuestaRuta(BaseModel):
     segments: list[SegmentoRuta]
 
 
-def buscar_albergue_destino(site_id: str) -> dict[str, Any]:
+# Mocks que nunca deben ser seleccionados como destino
+MOCKS_DESTINO_EXCLUIDOS = {
+    "hc-uat",
+    "sh-polideportivo",
+    "sh-san-lucas",
+    "TAM-TAM-002",
+    "REF-MAD-001",
+}
+NOMBRES_DESTINO_EXCLUIDOS = (
+    "uat",
+    "polideportivo oriente",
+    "santo angel",
+    "santo ángel",
+    "san lucas",
+    "españa 1101",
+)
+
+
+def obtener_puntos_incidencia_activos() -> list[tuple[float, float]]:
     """
-    Busca el centro de apoyo o albergue en la base de datos Supabase PostgreSQL.
-    Si no se encuentra un match exacto por UUID, folio o nombre, usa como salvaguarda
-    el centro de apoyo 'Espana 1101' (lat: 22.2585, lon: -97.8384).
+    Obtiene las coordenadas (longitud, latitud) de bloqueos viales e incidencias
+    activas en Supabase para alimentarlas al motor de evasion de Mapbox.
+    """
+    puntos: list[tuple[float, float]] = []
+    db_url = str(settings.DATABASE_URL).replace("+psycopg", "")
+    try:
+        with psycopg.connect(db_url) as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT longitud_referencia, latitud_referencia
+                    FROM alerta_zona_riesgo
+                    WHERE activo = true
+                      AND latitud_referencia IS NOT NULL
+                      AND longitud_referencia IS NOT NULL
+                """)
+                for lon, lat in cur.fetchall():
+                    puntos.append((float(lon), float(lat)))
+    except Exception:
+        # Puntos de bloqueo conocidos de salvaguarda (Moctezuma y Paso del Humo)
+        puntos = [(-97.8652, 22.2378), (-97.8437, 22.2295)]
+    return puntos
+
+
+def buscar_albergue_destino(
+    site_id: str, lat_origen: float = 22.2170, lon_origen: float = -97.8728
+) -> dict[str, Any]:
+    """
+    Busca el albergue de destino en Supabase PostgreSQL.
+    Si se proporciona un site_id valido, busca coincidencia exacta.
+    Si site_id es vacio o no existe, calcula el albergue oficial real mas cercano
+    a las coordenadas geograficas actuales del dispositivo (lat_origen, lon_origen).
     """
     db_url = str(settings.DATABASE_URL).replace("+psycopg", "")
     albergue = None
@@ -78,58 +124,74 @@ def buscar_albergue_destino(site_id: str) -> dict[str, Any]:
     try:
         with psycopg.connect(db_url) as conn:
             with conn.cursor() as cur:
-                # 1. Intentar por UUID si el site_id tiene formato UUID
-                try:
-                    uuid_val = uuid.UUID(site_id)
-                    cur.execute(
-                        "SELECT id, nombre, latitud, longitud FROM albergue WHERE id = %s",
-                        (uuid_val,),
-                    )
-                    albergue = cur.fetchone()
-                except (ValueError, AttributeError):
-                    pass
+                # 1. Intentar por UUID si el site_id tiene formato UUID y no es mock
+                if site_id:
+                    try:
+                        uuid_val = uuid.UUID(site_id)
+                        cur.execute(
+                            """
+                            SELECT id, nombre, latitud, longitud
+                            FROM albergue
+                            WHERE id = %s
+                              AND folio_identificador NOT IN ('hc-uat', 'sh-polideportivo', 'sh-san-lucas', 'TAM-TAM-002', 'REF-MAD-001')
+                            """,
+                            (uuid_val,),
+                        )
+                        albergue = cur.fetchone()
+                    except (ValueError, AttributeError):
+                        pass
 
-                # 2. Intentar por folio_identificador o nombre
+                # 2. Intentar por folio_identificador o nombre si no es mock
                 if not albergue and site_id:
                     cur.execute(
                         """
                         SELECT id, nombre, latitud, longitud
                         FROM albergue
-                        WHERE folio_identificador = %s OR nombre ILIKE %s
+                        WHERE (folio_identificador = %s OR nombre ILIKE %s)
+                          AND folio_identificador NOT IN ('hc-uat', 'sh-polideportivo', 'sh-san-lucas', 'TAM-TAM-002', 'REF-MAD-001')
+                          AND nombre NOT ILIKE '%uat%'
+                          AND nombre NOT ILIKE '%polideportivo%'
+                          AND nombre NOT ILIKE '%santo angel%'
+                          AND nombre NOT ILIKE '%santo ángel%'
+                          AND nombre NOT ILIKE '%san lucas%'
                         LIMIT 1
                         """,
                         (site_id, f"%{site_id}%"),
                     )
                     albergue = cur.fetchone()
 
-                # 3. Si no encontro o site_id es vacio, buscar el centro de Espana 1101 (22.2585, -97.8384)
+                # 3. Si no se especifico site_id o no se encontro, buscar el albergue REAL
+                # mas cercano geograficamente a la ubicacion del dispositivo del usuario
                 if not albergue:
                     cur.execute(
                         """
                         SELECT id, nombre, latitud, longitud
                         FROM albergue
                         WHERE latitud IS NOT NULL AND longitud IS NOT NULL
-                        ORDER BY (abs(latitud - 22.2585) + abs(longitud - (-97.8384))) ASC
+                          AND folio_identificador NOT IN ('hc-uat', 'sh-polideportivo', 'sh-san-lucas', 'TAM-TAM-002', 'REF-MAD-001')
+                          AND nombre NOT ILIKE '%uat%'
+                          AND nombre NOT ILIKE '%polideportivo%'
+                          AND nombre NOT ILIKE '%santo angel%'
+                          AND nombre NOT ILIKE '%santo ángel%'
+                          AND nombre NOT ILIKE '%san lucas%'
+                          AND nombre NOT ILIKE '%españa 1101%'
+                        ORDER BY ((latitud - %s)^2 + (longitud - %s)^2) ASC
                         LIMIT 1
-                        """
+                        """,
+                        (lat_origen, lon_origen),
                     )
                     albergue = cur.fetchone()
     except Exception:
-        # Si la conexion a la BD fallara temporalmente, proveemos el albergue Espana 1101 en memoria
-        albergue = (
-            "8d6db559-93ea-4184-8c67-30d376b511e0",
-            "España 1101 (Centro de Apoyo)",
-            22.2585,
-            -97.8384,
-        )
+        pass
 
+    # Salvaguarda oficial: Escuela Primaria Nuevo Santander (Altamira / Tampico conurbado)
     if not albergue:
-        return {
-            "id": "8d6db559-93ea-4184-8c67-30d376b511e0",
-            "name": "España 1101 (Centro de Apoyo)",
-            "latitude": 22.2585,
-            "longitude": -97.8384,
-        }
+        albergue = (
+            "829e0565-15f6-444f-8d8e-d00d22aea44e",
+            "Escuela Primaria Nuevo Santander",
+            22.363848,
+            -97.904238,
+        )
 
     return {
         "id": str(albergue[0]),
@@ -187,16 +249,24 @@ async def calcular_ruta_segura(solicitud: SolicitudRuta) -> RespuestaRuta:
         "segments": [...]
       }
     """
-    # 1. Resolver el destino (Centro de Apoyo en base de datos)
-    destino = buscar_albergue_destino(solicitud.siteId)
+    # 1. Obtener coordenadas de incidencias y bloqueos activos para su evasion
+    puntos_exclusion = obtener_puntos_incidencia_activos()
 
-    # 2. Calcular la ruta usando la API de Mapbox Directions
+    # 2. Resolver el albergue destino oficial mas cercano a la ubicacion del dispositivo
+    destino = buscar_albergue_destino(
+        site_id=solicitud.siteId,
+        lat_origen=solicitud.latitude,
+        lon_origen=solicitud.longitude,
+    )
+
+    # 3. Calcular la ruta usando la API de Mapbox Directions con evasion activa
     try:
         resultado_mapbox = await obtener_ruta_mapbox(
             origen_lon=solicitud.longitude,
             origen_lat=solicitud.latitude,
             destino_lon=destino["longitude"],
             destino_lat=destino["latitude"],
+            puntos_exclusion=puntos_exclusion,
         )
     except ErrorCalculoRuta as e:
         raise HTTPException(status_code=500, detail=str(e))

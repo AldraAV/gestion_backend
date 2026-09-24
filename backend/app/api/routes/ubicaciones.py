@@ -26,39 +26,61 @@ class ModeloUbicacion(BaseModel):
     severity: str | None = None
 
 
-# Catalogo base infalible en memoria
+# Catalogo base infalible en memoria (Exclusivamente albergues oficiales verificados)
 PUNTOS_PREDETERMINADOS: list[dict[str, Any]] = [
     {
-        "id": "sh-polideportivo",
+        "id": "TAM-TAM-001",
         "type": "shelter",
-        "name": "Polideportivo Oriente",
-        "latitude": 22.2412,
-        "longitude": -97.8215,
-        "address": "Col. Oriente, Ciudad Madero",
-        "capacity": 250,
-        "available": 90,
+        "name": "Escuela Primaria Nuevo Santander",
+        "latitude": 22.363848,
+        "longitude": -97.904238,
+        "address": "Calle Carmin No. 1930, entre Belen y Alcatraz, fraccionamiento Alejandro Briones, sector 3, Monte Alto, C.P. 89606",
+        "capacity": 100,
+        "available": 100,
         "status": "Abierto",
     },
     {
-        "id": "sh-san-lucas",
+        "id": "TAM-ALD-001",
         "type": "shelter",
-        "name": "Col. San Lucas",
-        "latitude": 22.2684,
-        "longitude": -97.8703,
-        "address": "Col. San Lucas, Tampico",
-        "capacity": 180,
-        "available": 12,
-        "status": "Casi lleno",
+        "name": "Escuela Primaria Pedro Jose Mendez, Zona 201",
+        "latitude": 23.301230,
+        "longitude": -98.073984,
+        "address": "Domicilio conocido, ejido El Vidal, C.P. 89679, Aldama",
+        "capacity": 50,
+        "available": 50,
+        "status": "Abierto",
     },
     {
-        "id": "hc-uat",
+        "id": "VER-ALA-001",
         "type": "shelter",
-        "name": "Centro Universitario UAT Tampico-Madero",
-        "latitude": 22.2585,
-        "longitude": -97.8384,
-        "address": "España 1101, Col. Vicente Guerrero, 89580 Ciudad Madero",
-        "capacity": 300,
-        "available": 150,
+        "name": "Escuela Primaria Enrique C. Rebsamen",
+        "latitude": 20.901060,
+        "longitude": -97.682055,
+        "address": "Calle Gabino Gonzalez s/n, Ejido Pueblo Nuevo, C.P. 92730, Alamo Temapache",
+        "capacity": 100,
+        "available": 100,
+        "status": "Abierto",
+    },
+    {
+        "id": "VER-PAN-001",
+        "type": "shelter",
+        "name": "Secundaria para Trabajadores Essington T. Trimmer Diaz",
+        "latitude": 22.053564,
+        "longitude": -98.182059,
+        "address": "Calle Aldama 305, Col. Revolucion Mexicana, C.P. 93997, Panuco",
+        "capacity": 120,
+        "available": 120,
+        "status": "Abierto",
+    },
+    {
+        "id": "VER-POZ-001",
+        "type": "shelter",
+        "name": "Casa del Migrante",
+        "latitude": 20.507247,
+        "longitude": -97.461041,
+        "address": "Avenida Papantla s/n, colonia Jardines de Poza Rica",
+        "capacity": 80,
+        "available": 80,
         "status": "Abierto",
     },
     {
@@ -67,8 +89,10 @@ PUNTOS_PREDETERMINADOS: list[dict[str, Any]] = [
         "name": "Acopio Plaza de Armas",
         "latitude": 22.2156,
         "longitude": -97.8579,
-        "address": "Centro Histórico, Tampico",
-        "status": "Recibiendo víveres y agua",
+        "address": "Centro Historico, Tampico",
+        "status": "Recibiendo viveres y agua",
+        "capacity": 100,
+        "available": 100,
     },
     {
         "id": "rb-moctezuma",
@@ -76,14 +100,14 @@ PUNTOS_PREDETERMINADOS: list[dict[str, Any]] = [
         "name": "Calle inundada (65 cm)",
         "latitude": 22.2378,
         "longitude": -97.8652,
-        "address": "Av. Moctezuma esq. Ejército Mexicano",
+        "address": "Av. Moctezuma esq. Ejercito Mexicano",
         "severity": "high",
-        "status": "Inundado - Tráfico cerrado",
+        "status": "Inundado - Trafico cerrado",
     },
     {
         "id": "rb-puente",
         "type": "road_block",
-        "name": "Árbol y poste derribado",
+        "name": "Arbol y poste derribado",
         "latitude": 22.2295,
         "longitude": -97.8437,
         "address": "Paso del Humo / Ribera",
@@ -92,11 +116,28 @@ PUNTOS_PREDETERMINADOS: list[dict[str, Any]] = [
     },
 ]
 
+# Lista negra estricta de inmuebles mock a excluir del mapa publico
+FOLIOS_MOCK_EXCLUIDOS = {
+    "hc-uat",
+    "sh-polideportivo",
+    "sh-san-lucas",
+    "TAM-TAM-002",
+    "REF-MAD-001",
+}
+NOMBRES_MOCK_EXCLUIDOS = (
+    "uat",
+    "polideportivo oriente",
+    "santo angel",
+    "santo ángel",
+    "san lucas",
+    "españa 1101",
+)
+
 
 def consultar_ubicaciones_base_datos() -> list[dict[str, Any]]:
     """
-    Obtiene las ubicaciones activas desde Supabase PostgreSQL.
-    Si la base de datos no esta disponible o vacia, retorna la salvaguarda predeterminada.
+    Obtiene las ubicaciones activas reales desde Supabase PostgreSQL,
+    excluyendo cualquier dato mock (UAT, Polideportivo, Santo Angel, San Lucas).
     """
     cadena_conexion = str(settings.DATABASE_URL).replace("+psycopg", "")
     puntos: list[dict[str, Any]] = []
@@ -104,43 +145,39 @@ def consultar_ubicaciones_base_datos() -> list[dict[str, Any]]:
     try:
         with psycopg.connect(cadena_conexion) as conexion:
             with conexion.cursor() as cursor:
-                # 1. Albergues y Centros de Apoyo
+                # 1. Albergues y Centros de Apoyo oficiales
                 cursor.execute("""
-                    SELECT folio_identificador, nombre, latitud, longitud, direccion, tipo_inmueble, observaciones
-                    FROM albergue
-                    WHERE latitud IS NOT NULL AND longitud IS NOT NULL
+                    SELECT a.folio_identificador, a.nombre, a.latitud, a.longitud, a.direccion,
+                           a.tipo_inmueble, a.observaciones, ii.capacidad_maxima, a.ocupacion_actual
+                    FROM albergue a
+                    LEFT JOIN inventario_infraestructura ii ON ii.albergue_id = a.id
+                    WHERE a.latitud IS NOT NULL AND a.longitud IS NOT NULL
+                    ORDER BY a.nombre
                 """)
                 for fila in cursor.fetchall():
-                    folio, nombre, lat, lon, dir_texto, tipo_inm, obs = fila
+                    folio, nombre, lat, lon, dir_texto, tipo_inm, obs, cap_max, ocup = fila
+                    folio_str = str(folio or "").strip()
+                    nombre_str = str(nombre or "").strip()
+                    nombre_min = nombre_str.lower()
+
+                    # Filtrar mocks explicitos solicitados
+                    if folio_str in FOLIOS_MOCK_EXCLUIDOS or any(m in nombre_min for m in NOMBRES_MOCK_EXCLUIDOS):
+                        continue
+
                     tipo_valor = "shelter"
                     if tipo_inm and "collection" in str(tipo_inm).lower():
                         tipo_valor = "collection_center"
 
-                    capacidad = None
-                    disponible = None
+                    capacidad = cap_max if cap_max is not None else 100
+                    ocupacion = ocup if ocup is not None else 0
+                    disponible = max(0, capacidad - ocupacion)
                     estado_texto = "Abierto"
-
-                    if obs:
-                        for parte in str(obs).split(","):
-                            parte_limpia = parte.strip()
-                            if "Capacidad:" in parte_limpia:
-                                try:
-                                    capacidad = int(parte_limpia.split(":")[1].strip())
-                                except (ValueError, IndexError):
-                                    pass
-                            elif "Disponible:" in parte_limpia:
-                                try:
-                                    disponible = int(parte_limpia.split(":")[1].strip())
-                                except (ValueError, IndexError):
-                                    pass
-                            elif "Estado:" in parte_limpia:
-                                estado_texto = parte_limpia.split(":")[1].strip()
 
                     puntos.append(
                         {
-                            "id": folio or str(nombre).lower().replace(" ", "-"),
+                            "id": folio_str or nombre_min.replace(" ", "-"),
                             "type": tipo_valor,
-                            "name": nombre,
+                            "name": nombre_str,
                             "latitude": float(lat),
                             "longitude": float(lon),
                             "address": dir_texto or "",
