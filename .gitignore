@@ -40,4 +40,5 @@ htmlcov/
 Thumbs.db
 [Dd]esktop.ini
 *.exe
+*.log
 

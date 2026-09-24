@@ -20,11 +20,15 @@ Start-Sleep -Seconds 2
 # Detener cualquier cloudflared previo
 Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
-# Iniciar Cloudflared en segundo plano persistente
+# Iniciar Cloudflared en segundo plano persistente con IPv4 forzado
+Remove-Item "$backendDir\cloudflared.log" -ErrorAction SilentlyContinue
 Start-Process -FilePath "$backendDir\cloudflared.exe" `
-    -ArgumentList "tunnel", "--url", "http://127.0.0.1:8000", "--logfile", "$backendDir\cloudflared.log" `
+    -ArgumentList "tunnel", "--edge-ip-version", "4", "--url", "http://127.0.0.1:8000", "--logfile", "$backendDir\cloudflared.log" `
     -WorkingDirectory $backendDir `
     -WindowStyle Hidden
 
-Start-Sleep -Seconds 4
+Start-Sleep -Seconds 6
+$lineaUrl = Get-Content "$backendDir\cloudflared.log" -ErrorAction SilentlyContinue | Select-String "trycloudflare.com" | Select-Object -Last 1
 Write-Output "Servicios iniciados correctamente."
+Write-Output "URL TUNEL CLOUDFLARE:"
+Write-Output $lineaUrl

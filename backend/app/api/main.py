@@ -7,6 +7,7 @@ from app.api.routes import (
     login,
     mapa_incidencias,
     private,
+    reportes_ciudadanos,
     rutas_seguras,
     supabase_storage,
     ubicaciones,
@@ -25,6 +26,7 @@ api_router.include_router(supabase_storage.router)
 api_router.include_router(rutas_seguras.router)
 api_router.include_router(ubicaciones.enrutador)
 api_router.include_router(mapa_incidencias.router)
+api_router.include_router(reportes_ciudadanos.router)
 api_router.include_router(albergues_admin.router, prefix="/admin")
 api_router.include_router(albergues_admin.router)
 
