@@ -558,7 +558,7 @@ def obtener_dashboard_albergue(
         FROM albergue_usuario au
         JOIN "user" u ON u.id = au.usuario_id
         WHERE au.albergue_id = :albergue_id
-          AND (au.rol IN ('administrador', 'administrador_albergue') OR u.rol IN ('administrador_albergue', 'coordinador_emergencias'))
+          AND (au.rol::text IN ('administrador', 'administrador_albergue') OR u.rol::text IN ('administrador_albergue', 'coordinador_emergencias'))
           AND au.activo = true
         LIMIT 1
     """)
