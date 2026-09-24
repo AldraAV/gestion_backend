@@ -1,0 +1,43 @@
+# ==============================================================================
+# HACKATEC PROYECTO - GITIGNORE RAIZ
+# ==============================================================================
+
+# Variables de entorno y secretos
+.env
+.env.*
+*.env
+!.env.example
+secrets/
+credentials/
+*.pem
+*.key
+*.cert
+*.pfx
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Bases de datos y caches
+*.sqlite3
+*.sqlite
+*.db
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.idea/
+.vscode/
+Thumbs.db
+[Dd]esktop.ini
+*.exe
+

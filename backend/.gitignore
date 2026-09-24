@@ -1,9 +1,80 @@
-__pycache__
-app.egg-info
-*.pyc
-.mypy_cache
-.coverage
-htmlcov
-.cache
-.venv
+# ==============================================================================
+# ENTORNO Y SECRETOS (CRITICO - PROTECCION CIVIL / HACKATEC)
+# ==============================================================================
+.env
+.env.*
+*.env
+!.env.example
+secrets/
+credentials/
 /credentials
+*.pem
+*.key
+*.cert
+*.pfx
+
+# ==============================================================================
+# PYTHON Y ENTORNOS VIRTUALES
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+app.egg-info/
+
+# Entornos virtuales locales
+.venv/
+venv/
+ENV/
+env/
+
+# ==============================================================================
+# BASES DE DATOS LOCALES Y TEMPORALES
+# ==============================================================================
+*.sqlite
+*.sqlite3
+*.db
+
+# ==============================================================================
+# TESTING, COBERTURA Y LINTERS
+# ==============================================================================
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.cache/
+
+# ==============================================================================
+# IDE Y SISTEMA OPERATIVO
+# ==============================================================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+Thumbs.db
+[Dd]esktop.ini
+*.exe

@@ -1,0 +1,1524 @@
+{
+  "albergue": {
+    "filas_totales": 5,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "responsable_id"
+        ],
+        "tabla_destino": "user",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "folio_identificador",
+        "tipo": "VARCHAR(50)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "nombre",
+        "tipo": "VARCHAR(255)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "direccion",
+        "tipo": "VARCHAR(500)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "municipio",
+        "tipo": "VARCHAR(150)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "localidad",
+        "tipo": "VARCHAR(150)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "estado_republica",
+        "tipo": "VARCHAR(100)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "latitud",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "longitud",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "tipo_inmueble",
+        "tipo": "VARCHAR(100)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "telefono_contacto",
+        "tipo": "VARCHAR(50)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "admite_mascotas",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "estado_operativo",
+        "tipo": "VARCHAR(17)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "observaciones",
+        "tipo": "VARCHAR(1000)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "responsable_id",
+        "tipo": "UUID",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "fecha_registro",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_actualizacion",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "ocupacion_actual",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": "0"
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "nombre": "ix_albergue_estado_operativo",
+        "columnas": [
+          "estado_operativo"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_albergue_folio_identificador",
+        "columnas": [
+          "folio_identificador"
+        ],
+        "unique": true
+      },
+      {
+        "nombre": "ix_albergue_municipio",
+        "columnas": [
+          "municipio"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_albergue_nombre",
+        "columnas": [
+          "nombre"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  "albergue_usuario": {
+    "filas_totales": 0,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "albergue_id"
+        ],
+        "tabla_destino": "albergue",
+        "columna_destino": [
+          "id"
+        ]
+      },
+      {
+        "columna_origen": [
+          "usuario_id"
+        ],
+        "tabla_destino": "user",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "albergue_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "usuario_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "rol",
+        "tipo": "VARCHAR(22)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "area",
+        "tipo": "VARCHAR(22)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "activo",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_asignacion",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "nombre": "ix_albergue_usuario_albergue_id",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_albergue_usuario_area",
+        "columnas": [
+          "area"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_albergue_usuario_rol",
+        "columnas": [
+          "rol"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_albergue_usuario_usuario_id",
+        "columnas": [
+          "usuario_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  "alembic_version": {
+    "filas_totales": 1,
+    "primary_key": [
+      "version_num"
+    ],
+    "foreign_keys": [],
+    "columnas": [
+      {
+        "nombre": "version_num",
+        "tipo": "VARCHAR(32)",
+        "nullable": false,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  "alerta_zona_riesgo": {
+    "filas_totales": 2,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "codigo_alerta",
+        "tipo": "VARCHAR(50)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "titulo",
+        "tipo": "VARCHAR(255)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "tipo_fenomeno",
+        "tipo": "VARCHAR(100)",
+        "nullable": true,
+        "default": "'Hidrometeorologico'::character varying"
+      },
+      {
+        "nombre": "nivel_alerta",
+        "tipo": "VARCHAR(8)",
+        "nullable": true,
+        "default": "'amarillo'::nivelalertariesgo"
+      },
+      {
+        "nombre": "descripcion",
+        "tipo": "VARCHAR(2000)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "cuenca_rio",
+        "tipo": "VARCHAR(150)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "nivel_actual_metros",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "nivel_critico_desbordamiento",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "municipios_afectados",
+        "tipo": "VARCHAR(1000)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "latitud_referencia",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "longitud_referencia",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "radio_afectacion_km",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "activo",
+        "tipo": "BOOLEAN",
+        "nullable": true,
+        "default": "true"
+      },
+      {
+        "nombre": "fecha_emision",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_vigencia",
+        "tipo": "TIMESTAMP",
+        "nullable": true,
+        "default": null
+      }
+    ],
+    "unique_constraints": [
+      {
+        "column_names": [
+          "codigo_alerta"
+        ],
+        "name": "alerta_zona_riesgo_codigo_alerta_key",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": [],
+          "postgresql_nulls_not_distinct": false
+        }
+      }
+    ],
+    "indexes": [
+      {
+        "nombre": "alerta_zona_riesgo_codigo_alerta_key",
+        "columnas": [
+          "codigo_alerta"
+        ],
+        "unique": true
+      }
+    ]
+  },
+  "grupo_familiar": {
+    "filas_totales": 0,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "albergue_id"
+        ],
+        "tabla_destino": "albergue",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "albergue_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "codigo_familia",
+        "tipo": "VARCHAR(50)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "nombre_referente",
+        "tipo": "VARCHAR(255)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "total_integrantes",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "comunidad_origen",
+        "tipo": "VARCHAR(255)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "necesidades_especiales",
+        "tipo": "VARCHAR(500)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "fecha_registro",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "nombre": "ix_grupo_familiar_albergue_id",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_grupo_familiar_codigo_familia",
+        "columnas": [
+          "codigo_familia"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  "inventario_infraestructura": {
+    "filas_totales": 2,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "albergue_id"
+        ],
+        "tabla_destino": "albergue",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "albergue_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "capacidad_maxima",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "dormitorios",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "banos",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "regaderas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "cocina",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "comedor",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "consultorio",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "bodega",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "salidas_emergencia",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "extintores_instalados",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "accesos_silla_ruedas",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "planta_electrica",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "sistema_agua",
+        "tipo": "VARCHAR(100)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "estado_inmueble",
+        "tipo": "VARCHAR(100)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_actualizacion",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      }
+    ],
+    "unique_constraints": [
+      {
+        "column_names": [
+          "albergue_id"
+        ],
+        "name": "inventario_infraestructura_albergue_id_key",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": [],
+          "postgresql_nulls_not_distinct": false
+        }
+      }
+    ],
+    "indexes": [
+      {
+        "nombre": "inventario_infraestructura_albergue_id_key",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": true
+      },
+      {
+        "nombre": "ix_inventario_infraestructura_albergue_id",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": true
+      }
+    ]
+  },
+  "inventario_recurso_humano": {
+    "filas_totales": 1,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "albergue_id"
+        ],
+        "tabla_destino": "albergue",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "albergue_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "administrador",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "medicos",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "enfermeria",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "psicologia",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "cocineros",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "personal_limpieza",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "seguridad",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "trabajadores_sociales",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "traductores",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "voluntarios",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "conductores",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "responsables_bodega",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_actualizacion",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      }
+    ],
+    "unique_constraints": [
+      {
+        "column_names": [
+          "albergue_id"
+        ],
+        "name": "inventario_recurso_humano_albergue_id_key",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": [],
+          "postgresql_nulls_not_distinct": false
+        }
+      }
+    ],
+    "indexes": [
+      {
+        "nombre": "inventario_recurso_humano_albergue_id_key",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": true
+      },
+      {
+        "nombre": "ix_inventario_recurso_humano_albergue_id",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": true
+      }
+    ]
+  },
+  "inventario_suministro": {
+    "filas_totales": 2,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "albergue_id"
+        ],
+        "tabla_destino": "albergue",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "albergue_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "agua_potable",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "alimentos_no_perecederos",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "formula_infantil",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "medicamentos_basicos",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "material_curacion",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "cobijas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "colchonetas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "ropa",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "kits_higiene",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "panales",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "cubrebocas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "productos_limpieza",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "bolsas_residuos",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "linternas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "pilas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "extintores_reserva",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "herramientas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "material_oficina",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_actualizacion",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      }
+    ],
+    "unique_constraints": [
+      {
+        "column_names": [
+          "albergue_id"
+        ],
+        "name": "inventario_suministro_albergue_id_key",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": [],
+          "postgresql_nulls_not_distinct": false
+        }
+      }
+    ],
+    "indexes": [
+      {
+        "nombre": "inventario_suministro_albergue_id_key",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": true
+      },
+      {
+        "nombre": "ix_inventario_suministro_albergue_id",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": true
+      }
+    ]
+  },
+  "item": {
+    "filas_totales": 0,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "owner_id"
+        ],
+        "tabla_destino": "user",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "description",
+        "tipo": "VARCHAR(255)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "title",
+        "tipo": "VARCHAR(255)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "owner_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "created_at",
+        "tipo": "TIMESTAMP",
+        "nullable": true,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  "persona_refugiada": {
+    "filas_totales": 3,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "albergue_id"
+        ],
+        "tabla_destino": "albergue",
+        "columna_destino": [
+          "id"
+        ]
+      },
+      {
+        "columna_origen": [
+          "egreso_por_id"
+        ],
+        "tabla_destino": "user",
+        "columna_destino": [
+          "id"
+        ]
+      },
+      {
+        "columna_origen": [
+          "grupo_familiar_id"
+        ],
+        "tabla_destino": "grupo_familiar",
+        "columna_destino": [
+          "id"
+        ]
+      },
+      {
+        "columna_origen": [
+          "registrado_por_id"
+        ],
+        "tabla_destino": "user",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "albergue_id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "grupo_familiar_id",
+        "tipo": "UUID",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "folio_identificacion",
+        "tipo": "VARCHAR(50)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "nombre",
+        "tipo": "VARCHAR(150)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "apellido_paterno",
+        "tipo": "VARCHAR(150)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "apellido_materno",
+        "tipo": "VARCHAR(150)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "curp",
+        "tipo": "VARCHAR(20)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "fecha_nacimiento",
+        "tipo": "TIMESTAMP",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "genero",
+        "tipo": "VARCHAR(30)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "municipio_origen",
+        "tipo": "VARCHAR(150)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "localidad_origen",
+        "tipo": "VARCHAR(150)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "telefono_contacto",
+        "tipo": "VARCHAR(50)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "contacto_emergencia_nombre",
+        "tipo": "VARCHAR(255)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "contacto_emergencia_telefono",
+        "tipo": "VARCHAR(50)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "condicion_medica",
+        "tipo": "VARCHAR(500)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "discapacidad",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "embarazo",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "adulto_mayor",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "menor_de_edad",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "necesidad_especial",
+        "tipo": "VARCHAR(500)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "dormitorio_asignado",
+        "tipo": "VARCHAR(100)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "numero_cama_colchoneta",
+        "tipo": "VARCHAR(50)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "estado_estancia",
+        "tipo": "VARCHAR(17)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "motivo_salida",
+        "tipo": "VARCHAR(255)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "destino_salida",
+        "tipo": "VARCHAR(255)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "observaciones",
+        "tipo": "VARCHAR(1000)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "registrado_por_id",
+        "tipo": "UUID",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "egreso_por_id",
+        "tipo": "UUID",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "fecha_ingreso",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "fecha_salida",
+        "tipo": "TIMESTAMP",
+        "nullable": true,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "nombre": "ix_persona_refugiada_albergue_id",
+        "columnas": [
+          "albergue_id"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_persona_refugiada_curp",
+        "columnas": [
+          "curp"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_persona_refugiada_estado_estancia",
+        "columnas": [
+          "estado_estancia"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_persona_refugiada_folio_identificacion",
+        "columnas": [
+          "folio_identificacion"
+        ],
+        "unique": true
+      },
+      {
+        "nombre": "ix_persona_refugiada_grupo_familiar_id",
+        "columnas": [
+          "grupo_familiar_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  "reporte_ciudadano": {
+    "filas_totales": 0,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "columna_origen": [
+          "brigada_asignada_id"
+        ],
+        "tabla_destino": "user",
+        "columna_destino": [
+          "id"
+        ]
+      }
+    ],
+    "columnas": [
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "folio_reporte",
+        "tipo": "VARCHAR(50)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "tipo_emergencia",
+        "tipo": "VARCHAR(23)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "descripcion",
+        "tipo": "VARCHAR(2000)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "latitud",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "longitud",
+        "tipo": "DOUBLE PRECISION",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "direccion_referencia",
+        "tipo": "VARCHAR(500)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "municipio",
+        "tipo": "VARCHAR(150)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "localidad",
+        "tipo": "VARCHAR(150)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "nivel_prioridad",
+        "tipo": "VARCHAR(22)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "estado_reporte",
+        "tipo": "VARCHAR(16)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "personas_afectadas",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": "1"
+      },
+      {
+        "nombre": "personas_vulnerables",
+        "tipo": "INTEGER",
+        "nullable": false,
+        "default": "0"
+      },
+      {
+        "nombre": "telefono_contacto",
+        "tipo": "VARCHAR(50)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "url_evidencia_multimedia",
+        "tipo": "VARCHAR(1000)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "brigada_asignada_id",
+        "tipo": "UUID",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "fecha_reporte",
+        "tipo": "TIMESTAMP",
+        "nullable": false,
+        "default": "now()"
+      },
+      {
+        "nombre": "fecha_atencion",
+        "tipo": "TIMESTAMP",
+        "nullable": true,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "nombre": "ix_reporte_ciudadano_estado_reporte",
+        "columnas": [
+          "estado_reporte"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_reporte_ciudadano_folio_reporte",
+        "columnas": [
+          "folio_reporte"
+        ],
+        "unique": true
+      },
+      {
+        "nombre": "ix_reporte_ciudadano_latitud",
+        "columnas": [
+          "latitud"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_reporte_ciudadano_longitud",
+        "columnas": [
+          "longitud"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_reporte_ciudadano_municipio",
+        "columnas": [
+          "municipio"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_reporte_ciudadano_nivel_prioridad",
+        "columnas": [
+          "nivel_prioridad"
+        ],
+        "unique": false
+      },
+      {
+        "nombre": "ix_reporte_ciudadano_tipo_emergencia",
+        "columnas": [
+          "tipo_emergencia"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  "user": {
+    "filas_totales": 3,
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "columnas": [
+      {
+        "nombre": "email",
+        "tipo": "VARCHAR(255)",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "is_active",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "is_superuser",
+        "tipo": "BOOLEAN",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "full_name",
+        "tipo": "VARCHAR(255)",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "hashed_password",
+        "tipo": "VARCHAR",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "id",
+        "tipo": "UUID",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "nombre": "created_at",
+        "tipo": "TIMESTAMP",
+        "nullable": true,
+        "default": null
+      },
+      {
+        "nombre": "rol",
+        "tipo": "VARCHAR(50)",
+        "nullable": true,
+        "default": "'personal_operativo'::character varying"
+      },
+      {
+        "nombre": "alcance_id",
+        "tipo": "UUID",
+        "nullable": true,
+        "default": null
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "nombre": "ix_user_email",
+        "columnas": [
+          "email"
+        ],
+        "unique": true
+      }
+    ]
+  }
+}

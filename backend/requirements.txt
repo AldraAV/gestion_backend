@@ -58,3 +58,5 @@ google-auth-oauthlib>=1.2.0
 structlog>=24.4.0
 rich>=13.9.0
 sentry-sdk[fastapi]>=2.18.0,<3.0.0
+openrouteservice>=2.3.3
+

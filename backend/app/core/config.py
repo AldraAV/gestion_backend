@@ -78,6 +78,8 @@ class Settings(BaseSettings):
     SUPABASE_KEY: str = ""
     SUPABASE_SERVICE_ROLE_KEY: str = ""
     SUPABASE_JWT_SECRET: str = ""
+    SUPABASE_PUBLISHABLE_KEY: str = ""
+    SUPABASE_JWKS_URL: str = ""
 
     # Configuracion de Google Drive y OAuth
     GOOGLE_CLIENT_ID: str = ""
@@ -101,6 +103,22 @@ class Settings(BaseSettings):
     DEEPINFRA_API_KEY: str = ""
     VOYAGE_API_KEY: str = ""
     VOYAGE_ENDPOINT: str = "https://ai.mongodb.com"
+
+    # Proveedores de datos de desastres (APIs externas - sin persistencia)
+    USGS_EARTHQUAKE_BASE_URL: str = "https://earthquake.usgs.gov/fdsnws/event/1/query"
+    CONAGUA_SMN_BASE_URL: str = ""
+    FIRMS_API_KEY: str = ""
+    FIRMS_BASE_URL: str = "https://firms.modaps.eosdis.nasa.gov/api"
+    GDACS_FEED_URL: str = "https://www.gdacs.org/xml/rss.xml"
+    OPEN_METEO_BASE_URL: str = "https://api.open-meteo.com/v1"
+    CLIMA_PROVIDER: str = "openmeteo"
+    MAPBOX_ACCESS_TOKEN: str = ""
+
+    # Cache TTL en segundos por proveedor
+    CACHE_TTL_SISMOS: int = 300
+    CACHE_TTL_CLIMA: int = 900
+    CACHE_TTL_INCENDIOS: int = 21600
+    CACHE_TTL_GLOBAL: int = 21600
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
